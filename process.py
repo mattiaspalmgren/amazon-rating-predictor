@@ -1,29 +1,34 @@
-import nltk, re
+import nltk, re, json
 from nltk.corpus import stopwords
 from nltk.stem.lancaster import LancasterStemmer
 
 
+def read_documents(filename):
+    documents = []
+    for line in open (filename, 'r'):
+        documents.append(json.loads(line))
+    return documents
+
+
 def pre_process(documents):
-    st = LancasterStemmer()
+    document_tokens = [(nltk.word_tokenize(text), c) for (text, c) in documents]
+    document_tokens = [clean_tokens(tokens, c) for (tokens, c) in document_tokens]
+
+    return document_tokens
+
+
+def clean_tokens(tokens, c):
     stop = stopwords.words('english')
     stop.append('')
+    st = LancasterStemmer()
 
-    document_tokens = []
-    for document in documents[:10]:
-        document_tokens.append(nltk.word_tokenize(document['reviewText']))
+    tmp_tokens = []
+    for token in tokens:
+        token = st.stem(token)
+        token = (re.sub(r'\W+', '', str(token)).lower())
+        if token not in stop:
+            tmp_tokens.append(token)
 
-    # Remove stopwords and stem tokens
-    tmp_document_tokens = []
-    for document_token in document_tokens:
-        tmp_document_token = []
-        for token in document_token:
-            # Remove non alpha-numeric characters and lowercase words
-            token = re.sub(r'\W+', '', str(token)).lower()
-            if token not in stop:
-                # Stem token
-                token = st.stem(token)
-                tmp_document_token.append(token)
+    return tmp_tokens, c
 
-    tmp_document_tokens.append(tmp_document_token)
 
-    return tmp_document_tokens
