@@ -1,43 +1,49 @@
 from nltk import precision, recall
 import collections, random, math
+import numpy as np
+
 from process import *
-from build_features import *
+from features import *
 
-# Load data
-data = read_documents('data/electronics-reviews-sub.json')
 
-# Convert stars into pos/neg
-star_map = {1.0: "neg", 2.0: "neg", 3.0: "pos", 4.0: "pos", 5.0: "pos"}
-data = tuple([(document['reviewText'], star_map[document['overall']]) for document in data[:1000]])
-reviews = pre_process(data)
+# Load original data
+# data = load_original_data()
+# reviews = pre_process(data)
 
-# print(reviews[0])
+# Dump processed data
+# with open('data/reviews_processed_without_stem.json', 'w') as outfile:
+#     json.dump(reviews, outfile)
 
-vocalbulary = build_vocabulary(reviews)
+# Open
+reviews = load_processed_data('data/reviews_processed_without_stem.json')
+# random.seed(12345)
+# np.random.shuffle(reviews)
+# reviews = reviews[:1000]
 
-reviews_features = [(counter_feature(text), c) for (text, c) in reviews]
-print(reviews_features)
 
-# reviews_features = [(occurs_feature(text, vocalbulary), c) for (text, c) in reviews]
+vocabulary = build_vocabulary(reviews)
+best_words = build_best_words(reviews)
+
+# reviews_features = [(counter_feature(text), c) for (text, c) in reviews]
+
+# reviews_features = [(occurs_feature(text, vocabulary), c) for (text, c) in reviews]
+
+reviews_features = [(bigram_feature(text), c) for (text, c) in reviews]
+
+# reviews_features = [(best_word_feats(text, best_words), c) for (text, c) in reviews]
+
 # print(reviews_features)
 
-random.seed(12345)
-COUNT = len(reviews_features)
-TRAIN_COUNT = math.floor(0.8 * COUNT)
-TEST_COUNT = math.floor(0.2 * COUNT)
+# Divide into train and test set
+train_reviews, test_reviews = train_test_set(reviews_features)
 
-all_lines = random.sample(range(0, COUNT), COUNT)
-train_lines = all_lines[0:TRAIN_COUNT]
-test_lines = all_lines[TRAIN_COUNT:]
-
-train_reviews = [reviews_features[i] for i in train_lines]
-test_reviews = [reviews_features[i] for i in test_lines]
-
-# print(len(train_reviews))
-# print(len(test_reviews))
-
+# Train classifier
 classifier = nltk.NaiveBayesClassifier.train(train_reviews)
 
+# Most informative feature
+print(classifier.show_most_informative_features(32))
+
+# For calculating precision/recall
 ref_set = collections.defaultdict(set)
 test_set = collections.defaultdict(set)
 
