@@ -14,25 +14,32 @@ from features import *
 # with open('data/reviews_processed_without_stem.json', 'w') as outfile:
 #     json.dump(reviews, outfile)
 
-# Open
+# Open processed data
 reviews = load_processed_data('data/reviews_processed_without_stem.json')
+
+# Subset data
 # random.seed(12345)
 # np.random.shuffle(reviews)
 # reviews = reviews[:1000]
 
 
+# Build necessary helping structures
 vocabulary = build_vocabulary(reviews)
-best_words = build_best_words(reviews)
+top_words = build_best_words(reviews)
+
+# Different feature vectors
 
 # reviews_features = [(counter_feature(text), c) for (text, c) in reviews]
 
 # reviews_features = [(occurs_feature(text, vocabulary), c) for (text, c) in reviews]
 
-reviews_features = [(bigram_feature(text), c) for (text, c) in reviews]
+# reviews_features = [(bigram_feature(text), c) for (text, c) in reviews]
 
-# reviews_features = [(best_word_feats(text, best_words), c) for (text, c) in reviews]
+# reviews_features = [(top_word_feats(text, top_words), c) for (text, c) in reviews]
 
-# print(reviews_features)
+reviews_features = [(hybrid_top_bigram_feats(text, top_words), c) for (text, c) in reviews]
+
+print(reviews_features)
 
 # Divide into train and test set
 train_reviews, test_reviews = train_test_set(reviews_features)

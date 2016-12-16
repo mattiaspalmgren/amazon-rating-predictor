@@ -1,4 +1,6 @@
 from collections import Counter
+
+import itertools
 from nltk.collocations import BigramCollocationFinder
 from nltk.metrics import BigramAssocMeasures
 from nltk import FreqDist, ConditionalFreqDist
@@ -36,7 +38,7 @@ def build_best_words(reviews):
         neg_score = BigramAssocMeasures.chi_sq(cfd_neg['neg'][word], (freq, neg_word_count), total_word_count)
         word_scores[word] = pos_score + neg_score
 
-    best = sorted(word_scores.items(), reverse=True, key=lambda x: x[1])[:10000]
+    best = sorted(word_scores.items(), reverse=True, key=lambda x: x[1])[:1000]
     return set([w for w, s in best])
 
 
@@ -52,12 +54,18 @@ def counter_feature(tokens):
 
 
 def bigram_feature(words, score_fn=BigramAssocMeasures.chi_sq, n=200):
-
     bigram_finder = BigramCollocationFinder.from_words(words)
     bigrams = bigram_finder.nbest(score_fn, n)
     d = dict([(bigram, True) for bigram in bigrams])
     return d
 
-def best_word_feats(words, best_words):
-    return dict([(word, True) for word in words if word in best_words])
 
+def top_word_feats(words, top_words):
+    return dict([(word, True) for word in words if word in top_words])
+
+
+def hybrid_top_bigram_feats(words, top_words, score_fn=BigramAssocMeasures.chi_sq, n=200):
+    bigram_finder = BigramCollocationFinder.from_words(words)
+    bigrams = bigram_finder.nbest(score_fn, n)
+    d = dict([(ngram, True) for ngram in itertools.chain(top_words, bigrams)])
+    return d
