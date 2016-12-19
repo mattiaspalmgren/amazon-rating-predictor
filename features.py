@@ -64,8 +64,9 @@ def top_word_feats(words, top_words):
     return dict([(word, True) for word in words if word in top_words])
 
 
-def hybrid_top_bigram_feats(words, top_words, score_fn=BigramAssocMeasures.chi_sq, n=200):
-    bigram_finder = BigramCollocationFinder.from_words(words)
-    bigrams = bigram_finder.nbest(score_fn, n)
-    d = dict([(ngram, True) for ngram in itertools.chain(top_words, bigrams)])
-    return d
+def combine_features(a, b):
+    combined_features = a
+    for (i, idx) in enumerate(range(0, len(a))):
+        combined_features[idx][0].update(b[idx][0])
+
+    return combined_features
