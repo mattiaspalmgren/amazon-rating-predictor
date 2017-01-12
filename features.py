@@ -1,6 +1,4 @@
 from collections import Counter
-
-import itertools
 from nltk.collocations import BigramCollocationFinder
 from nltk.metrics import BigramAssocMeasures
 from nltk import FreqDist, ConditionalFreqDist

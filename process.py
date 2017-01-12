@@ -1,4 +1,5 @@
 import nltk, re, json, math, random
+import numpy as np
 from nltk.corpus import stopwords
 from nltk.stem.lancaster import LancasterStemmer
 
@@ -45,6 +46,8 @@ def load_original_data(url='data/reviews_Electronics_15k.json'):
     neg_reviews = neg_reviews[:1400]
 
     reviews = pos_reviews + neg_reviews
+    random.seed(12345)
+    np.random.shuffle(reviews)
 
     return reviews
 

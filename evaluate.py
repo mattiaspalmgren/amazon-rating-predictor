@@ -1,6 +1,6 @@
 from nltk import precision, recall
-from sklearn.metrics import zero_one_loss
-import collections, random, math
+from sklearn.metrics import zero_one_loss, precision_score, recall_score
+import collections
 
 
 def evaluate_classifier(classifier, test_reviews):
@@ -27,3 +27,7 @@ def evaluate_classifier(classifier, test_reviews):
     return(0)
 
 
+def compute_evaluation_metrics(ref_set, test_set):
+    print('precision:', precision_score(ref_set, test_set))
+    print('recall:', recall_score(ref_set, test_set))
+    print('misclassification rate', zero_one_loss(ref_set, test_set))
