@@ -1,5 +1,4 @@
 import nltk, re, json, math, random
-import numpy as np
 from nltk.corpus import stopwords
 from nltk.stem.lancaster import LancasterStemmer
 
