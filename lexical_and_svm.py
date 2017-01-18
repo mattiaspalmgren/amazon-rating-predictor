@@ -10,7 +10,6 @@ style.use("ggplot")
 
 # Load original data
 data = load_original_data()
-# data = data[:50]
 
 print("Splitting...")
 splitted_sentences = [(split(text), c) for (text, c) in data if len(text) > 0]
@@ -28,6 +27,17 @@ print("Assigning sentiment score...")
 scores = [(sentiment_score(doc), c) for (doc, c) in dict_tagged_docs]
 scores = np.array([score for (score, label) in scores])
 scores = scores.reshape(-1, 1)
+
+# Rule based prediction
+# y_hat = []
+# for s in scores:
+#     if s > 0:
+#         y_hat.append(1)
+#     else:
+#         y_hat.append(0)
+#
+# y_tmp = [c for (text, c) in data]
+# y_test = [0 if label == 'neg' else 1 for label in y_tmp]
 
 # TF-IDF representation
 count_vect = CountVectorizer()
