@@ -1,6 +1,5 @@
-import numpy as np
 from process import *
-from features import *
+from feature import *
 from evaluate import *
 
 # Load original data
@@ -14,19 +13,9 @@ from evaluate import *
 # Open processed data
 reviews = load_processed_data('data/reviews_processed.json')
 
-# Subset data
-# random.seed(12345)
-# np.random.shuffle(reviews)
-# reviews = reviews[:100]
-
-
-# Build necessary helping structures
-# top_words = build_best_words(reviews)
-
-# Different feature vectors
+# Different feature vectors, comment out/in depending on what feature/s to use.
 print("Forming the features...")
 
-# reviews_features = [(counter_feature(text), c) for (text, c) in reviews]
 feat = FeatureBuilder(reviews)
 
 # Use counter feature
@@ -43,6 +32,7 @@ bigram_feature = feat.form_bigram_feature()
 feat.build_top_words()
 top_word_feature = feat.form_top_words_feature()
 
+# Combine two feature
 reviews_features = feat.combine_features(top_word_feature, bigram_feature)
 
 # Divide into train and test set
@@ -54,6 +44,6 @@ classifier = nltk.NaiveBayesClassifier.train(train_reviews)
 
 # Evaluate classifier
 print("Evaluation metrics...")
-evaluate_classifier(classifier, test_reviews)
+evaluate_naivebayes(classifier, test_reviews)
 
 

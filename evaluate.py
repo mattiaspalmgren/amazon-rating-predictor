@@ -4,7 +4,7 @@ import collections
 
 
 def evaluate_naivebayes(classifier, test_reviews):
-    # For calculating precision/recall
+    # For computing metrics
     ref_set = collections.defaultdict(set)
     test_set = collections.defaultdict(set)
     ref_set_arr = []
@@ -32,10 +32,12 @@ def evaluate_naivebayes(classifier, test_reviews):
 
 
 def evaluate_svm(y_hat, test_reviews):
+    # For computing metrics
     ref_set = collections.defaultdict(set)
     test_set = collections.defaultdict(set)
     ref_set_arr = []
     test_set_arr = []
+    # Create gold standard and predicted labels
     for i, label in enumerate(test_reviews):
         label = "neg" if label == 0 else "pos"
         observed = "neg" if y_hat[i] == 0 else "pos"
