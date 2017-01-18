@@ -67,7 +67,7 @@ def load_original_data(url='data/reviews_Electronics_15k.json'):
 
     reviews = pos_reviews + neg_reviews
     random.seed(12345)
-    np.random.shuffle(reviews)
+    random.shuffle(reviews)
 
     return reviews
 
